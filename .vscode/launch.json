@@ -6,6 +6,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Executable",
+            "request": "launch",
+            "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
+            "mainClass": "Executable",
+            "projectName": "pendu_pour_etu_9eb3c43b"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
