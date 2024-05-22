@@ -13,7 +13,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
 
-import java.util.List;
+import java.util.List; 
 import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
@@ -90,8 +90,11 @@ public class Pendu extends Application {
         this.modelePendu = new MotMystere("/usr/share/dict/french", 3, 10, MotMystere.FACILE, 10);
         this.lesImages = new ArrayList<Image>();
         this.chargerImages("./img");
-
         this.panelCentral = new BorderPane();
+        this.pg = new ProgressBar(0);
+        this.dessin = new ImageView(this.lesImages.get(0));
+        this.clavier = new Clavier("AZERTYUIOPQSDFGHJKLMWXCVBN", new ControleurLettres(this.modelePendu, this));
+        this.motCrypte = new Text("Mot Cryp****");
         // A terminer d'implementer
     }
 
@@ -118,6 +121,7 @@ public class Pendu extends Application {
         boutonMaison = new Button();
         boutonParametres = new Button();
         boutonInfo = new Button();
+        boutonInfo.setOnAction(new ControleurInfos(this));
         ImageView maison = new ImageView(new Image(new File("./img/home.png").toURI().toString()));
         maison.setFitHeight(30);
         maison.setFitWidth(30);
@@ -138,14 +142,14 @@ public class Pendu extends Application {
         return res;
     }
 
-    // /**
-     // * @return le panel du chronomètre
-     // */
-    // private TitledPane leChrono(){
-        // A implementer
-        // TitledPane res = new TitledPane();
-        // return res;
-    // }
+    /**
+     * @return le panel du chronomètre
+     */
+    private TitledPane leChrono(){
+        Label l = new Label("0s");
+        TitledPane res = new TitledPane("Chronomètre", l);
+        return res;
+    }
 
     /**
      * @return la fenêtre de jeu avec le mot crypté, l'image, la barre
@@ -156,12 +160,19 @@ public class Pendu extends Application {
 
 
         VBox droite = new VBox();
+        droite.setSpacing(10);
+        droite.setPadding(new Insets(10, 10, 10, 10));
+        droite.setAlignment(Pos.TOP_CENTER);
         Button nvMot = new Button("Nouveau mot");
-        droite.getChildren().addAll(leNiveau, chrono, nvMot);
+        droite.getChildren().addAll(this.leNiveau, this.leChrono(), nvMot);
         borderPane.setRight(droite);
 
         VBox centre = new VBox();
         centre.getChildren().addAll(this.motCrypte, this.dessin, this.pg, this.clavier);
+        centre.setAlignment(Pos.TOP_CENTER);
+        centre.setSpacing(10);
+        centre.setPadding(new Insets(10, 10, 10, 10));
+        borderPane.setCenter(centre);
         return borderPane;
     }
 
@@ -209,6 +220,7 @@ public class Pendu extends Application {
     }
     
     public void modeJeu(){
+        this.leNiveau = new Text("Niveau Facile");
         this.panelCentral.setCenter(this.fenetreJeu());
         boutonMaison.setDisable(false);
         boutonParametres.setDisable(true);
@@ -248,6 +260,19 @@ public class Pendu extends Application {
     public Alert popUpReglesDuJeu(){
         // A implementer
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Règles du jeu");
+        alert.setHeaderText("Le jeu du pendu");
+        alert.setContentText("Le jeu du pendu consiste à trouver un mot en un nombre limité de tentatives.\n"
+                + "Le mot à trouver est caché par des étoiles. Vous devez proposer des lettres pour le découvrir.\n"
+                + "Si vous proposez une lettre qui n'est pas dans le mot, vous perdez une tentative.\n"
+                + "Si vous proposez une lettre qui est dans le mot, elle est affichée à sa place.\n"
+                + "Si vous proposez une lettre déjà proposée, vous ne perdez pas de tentative.\n"
+                + "Si vous proposez un mot, vous ne perdez pas de tentative.\n"
+                + "Si vous trouvez le mot, vous gagnez la partie.\n"
+                + "Si vous n'avez plus de tentatives, vous perdez la partie.\n"
+                + "                                                          \n"
+                + "Bonne chance!");
+        alert.getDialogPane().setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
         return alert;
     }
     
@@ -271,7 +296,7 @@ public class Pendu extends Application {
     public void start(Stage stage) {
         stage.setTitle("IUTEAM'S - La plateforme de jeux de l'IUTO");
         stage.setScene(this.laScene());
-        this.modeAccueil();
+        this.modeJeu();
         stage.show();
     }
 
