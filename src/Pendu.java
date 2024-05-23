@@ -90,7 +90,9 @@ public class Pendu extends Application {
         this.modelePendu = new MotMystere("/usr/share/dict/french", 3, 10, MotMystere.FACILE, 10);
         this.lesImages = new ArrayList<Image>();
         this.chargerImages("./img");
+        
         this.panelCentral = new BorderPane();
+        this.leNiveau = new Text("Niveau Facile");
         this.pg = new ProgressBar(0);
         this.dessin = new ImageView(this.lesImages.get(0));
         this.clavier = new Clavier("AZERTYUIOPQSDFGHJKLMWXCVBN", new ControleurLettres(this.modelePendu, this));
@@ -119,6 +121,7 @@ public class Pendu extends Application {
         res.setLeft(titre);
         HBox hb = new HBox();
         boutonMaison = new Button();
+        boutonMaison.setOnAction(new ControleurBoutonHome(this.modelePendu, this));
         boutonParametres = new Button();
         boutonInfo = new Button();
         boutonInfo.setOnAction(new ControleurInfos(this));
@@ -182,6 +185,7 @@ public class Pendu extends Application {
     private Pane fenetreAccueil(){
         VBox vb = new VBox();
         bJouer = new Button("Lancer une partie");
+        bJouer.setOnAction(new ControleurLancerPartie(this.modelePendu, this));
         VBox radiosButton = new VBox();
         TitledPane tp = new TitledPane("Niveau de difficulté", radiosButton);
         tp.setCollapsible(false);
@@ -220,7 +224,6 @@ public class Pendu extends Application {
     }
     
     public void modeJeu(){
-        this.leNiveau = new Text("Niveau Facile");
         this.panelCentral.setCenter(this.fenetreJeu());
         boutonMaison.setDisable(false);
         boutonParametres.setDisable(true);
@@ -296,7 +299,7 @@ public class Pendu extends Application {
     public void start(Stage stage) {
         stage.setTitle("IUTEAM'S - La plateforme de jeux de l'IUTO");
         stage.setScene(this.laScene());
-        this.modeJeu();
+        this.modeAccueil();
         stage.show();
     }
 
