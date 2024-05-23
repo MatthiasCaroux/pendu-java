@@ -33,6 +33,16 @@ public class ControleurLettres implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent actionEvent) {
-
+        Button bouton = (Button) actionEvent.getSource();
+        char lettre = bouton.getText().charAt(0);
+        this.modelePendu.essaiLettre(lettre);
+        this.vuePendu.majAffichage();
+        if (this.modelePendu.gagne()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Bravo !");
+            alert.setHeaderText("Vous avez gagné !");
+            alert.showAndWait();
+            this.vuePendu.modeAccueil();
+        }
     }
 }

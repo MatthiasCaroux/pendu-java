@@ -92,11 +92,14 @@ public class Pendu extends Application {
         this.chargerImages("./img");
         
         this.panelCentral = new BorderPane();
-        this.leNiveau = new Text("Niveau Facile");
+
+        int numDifficulté = this.modelePendu.getNiveau();
+        String nomDiff = this.modelePendu.intToString(numDifficulté);
+        this.leNiveau = new Text("Niveau " + nomDiff);
         this.pg = new ProgressBar(0);
         this.dessin = new ImageView(this.lesImages.get(0));
-        this.clavier = new Clavier("AZERTYUIOPQSDFGHJKLMWXCVBN", new ControleurLettres(this.modelePendu, this));
-        this.motCrypte = new Text("Mot Cryp****");
+        this.clavier = new Clavier("AZERTYUIOPQSDFGHJKLMWXCVBN-", new ControleurLettres(this.modelePendu, this));
+        this.motCrypte = new Text(this.modelePendu.getMotCrypte());
         // A terminer d'implementer
     }
 
@@ -163,14 +166,21 @@ public class Pendu extends Application {
 
 
         VBox droite = new VBox();
-        droite.setSpacing(10);
-        droite.setPadding(new Insets(10, 10, 10, 10));
+        droite.setSpacing(30);
+        droite.setPadding(new Insets(20, 20, 20, 20));//top, right, bottom, left
         droite.setAlignment(Pos.TOP_CENTER);
         Button nvMot = new Button("Nouveau mot");
         droite.getChildren().addAll(this.leNiveau, this.leChrono(), nvMot);
         borderPane.setRight(droite);
 
         VBox centre = new VBox();
+        this.motCrypte = new Text(this.modelePendu.getMotCrypte());
+        int numDifficulté = this.modelePendu.getNiveau();
+        String nomDiff = this.modelePendu.intToString(numDifficulté);
+
+        this.leNiveau = new Text("Niveau " + nomDiff);
+        this.motCrypte.setStyle("-fx-font-size: 30;");
+        this.leNiveau.setStyle("-fx-font-size: 20;");
         centre.getChildren().addAll(this.motCrypte, this.dessin, this.pg, this.clavier);
         centre.setAlignment(Pos.TOP_CENTER);
         centre.setSpacing(10);
@@ -191,9 +201,13 @@ public class Pendu extends Application {
         tp.setCollapsible(false);
         ToggleGroup tg = new ToggleGroup();
         RadioButton rb1 = new RadioButton("Facile");
+        rb1.setOnAction(new ControleurNiveau(this.modelePendu));
         RadioButton rb2 = new RadioButton("Medium");
+        rb2.setOnAction(new ControleurNiveau(this.modelePendu));
         RadioButton rb3 = new RadioButton("Difficile");
+        rb3.setOnAction(new ControleurNiveau(this.modelePendu));
         RadioButton rb4 = new RadioButton("Expert");
+        rb4.setOnAction(new ControleurNiveau(this.modelePendu));
         tg.getToggles().addAll(rb1, rb2, rb3, rb4);
         rb1.setSelected(true);
         radiosButton.getChildren().addAll(rb1, rb2, rb3, rb4);
@@ -242,7 +256,10 @@ public class Pendu extends Application {
      * raffraichit l'affichage selon les données du modèle
      */
     public void majAffichage(){
-        // A implementer
+        this.motCrypte.setText(this.modelePendu.getMotCrypte());
+        this.clavier.desactiveTouches(this.modelePendu.getLettresEssayees());
+        this.dessin.setImage(this.lesImages.get(this.modelePendu.getNbErreursMax()-this.modelePendu.getNbErreursRestants()));
+        this.pg.setProgress((double)this.modelePendu.getNbErreursMax()/this.modelePendu.getNbErreursRestants());
     }
 
     /**

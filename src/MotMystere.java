@@ -161,6 +161,7 @@ public class MotMystere {
      */
     public void setNiveau(int niveau){
         this.niveau = niveau;
+        this.initMotMystere(this.motATrouver, this.niveau, this.nbEerreursMax);
     }
 
     /**
@@ -252,6 +253,21 @@ public class MotMystere {
         return "Mot a trouve: "+this.motATrouver+" Lettres trouvees: "+
                this.motCrypte+" nombre de lettres restantes "+this.nbLettresRestantes+
                " nombre d'essais restents: "+this.nbErreursRestantes;
+    }
+
+    public String intToString(int i){
+        switch (i) {
+            case 0:
+                return "Facile";
+            case 1:
+                return "Moyen";
+            case 2:
+                return "Difficile";
+            case 3:
+                return "Expert";
+            default:
+                return "Niveau inconnu";
+        }
     }
 
 }
