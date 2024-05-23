@@ -43,6 +43,15 @@ public class ControleurLettres implements EventHandler<ActionEvent> {
             alert.setHeaderText("Vous avez gagné !");
             alert.showAndWait();
             this.vuePendu.modeAccueil();
+            
+        }
+        else if (this.modelePendu.perdu()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Perdu !");
+            alert.setHeaderText("Vous avez perdu !");
+            alert.showAndWait();
+            this.vuePendu.modeAccueil();
+            this.vuePendu.lancePartie();
         }
     }
 }

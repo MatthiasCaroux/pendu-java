@@ -6,60 +6,48 @@ import javafx.util.Duration;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
-
-/**
- * Permet de gérer un Text associé à une Timeline pour afficher un temps écoulé
- */
 public class Chronometre extends Text{
-    /**
-     * timeline qui va gérer le temps
-     */
     private Timeline timeline;
-    /**
-     * la fenêtre de temps
-     */
     private KeyFrame keyFrame;
-    /**
-     * le contrôleur associé au chronomètre
-     */
-    private ControleurChronometre actionTemps;
+    private long startTime;
 
-    /**
-     * Constructeur permettant de créer le chronomètre
-     * avec un label initialisé à "0:0:0"
-     * Ce constructeur créer la Timeline, la KeyFrame et le contrôleur
-     */
     public Chronometre(){
-        // A implémenter
+        setText("0:0:0");
+        setFont(Font.font("Arial", 20));
+        setTextAlignment(TextAlignment.CENTER);
+
+        keyFrame = new KeyFrame(Duration.seconds(1), event -> {
+            long elapsedMillis = System.currentTimeMillis() - startTime;
+            setTime(elapsedMillis);
+        });
+
+        timeline = new Timeline(keyFrame);
+        timeline.setCycleCount(Animation.INDEFINITE);
     }
 
-    /**
-     * Permet au controleur de mettre à jour le text
-     * la durée est affichée sous la forme m:s
-     * @param tempsMillisec la durée depuis à afficher
-     */
     public void setTime(long tempsMillisec){
-        // A implémenter
+        long secondes = tempsMillisec / 1000;
+        long minutes = secondes / 60;
+        long heures = minutes / 60;
+
+        setText(String.format("%d:%d:%d", heures, minutes % 60, secondes % 60));
     }
 
-    /**
-     * Permet de démarrer le chronomètre
-     */
     public void start(){
-        // A implémenter
+        startTime = System.currentTimeMillis();
+        timeline.play();
     }
 
-    /**
-     * Permet d'arrêter le chronomètre
-     */
     public void stop(){
-        // A implémenter
+        timeline.stop();
     }
 
-    /**
-     * Permet de remettre le chronomètre à 0
-     */
     public void resetTime(){
-        // A implémenter
+        startTime = System.currentTimeMillis();
+        setTime(0);
+    }
+
+    public double getTime(){
+        return System.currentTimeMillis() - startTime;
     }
 }

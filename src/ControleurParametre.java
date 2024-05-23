@@ -1,10 +1,13 @@
+import java.util.Optional;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ButtonType;
 
 /**
- * Contrôleur à activer lorsque l'on clique sur le bouton rejouer ou Lancer une partie
+ * Contrôleur à activer lorsque l'on clique sur le bouton engrenage
  */
-public class ControleurBoutonHome implements EventHandler<ActionEvent> {
+public class ControleurParametre implements EventHandler<ActionEvent> {
     /**
      * modèle du jeu
      */
@@ -18,7 +21,7 @@ public class ControleurBoutonHome implements EventHandler<ActionEvent> {
      * @param modelePendu modèle du jeu
      * @param p vue du jeu
      */
-    public ControleurBoutonHome(MotMystere modelePendu, Pendu vuePendu) {
+    public ControleurParametre(MotMystere modelePendu, Pendu vuePendu) {
         this.modelePendu = modelePendu;
         this.vuePendu = vuePendu;
     }
@@ -29,6 +32,6 @@ public class ControleurBoutonHome implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent actionEvent) {
-        this.vuePendu.modeAccueil();
+        Optional<ButtonType> reponse = this.vuePendu.popUpChangementDeCouleur().showAndWait(); // on lance la fenêtre popup et on attends la réponse
     }
 }

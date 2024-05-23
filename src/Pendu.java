@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.ButtonBar.ButtonData ;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.paint.Color;
 
 import java.util.List; 
 import java.util.Arrays;
@@ -100,6 +102,7 @@ public class Pendu extends Application {
         this.dessin = new ImageView(this.lesImages.get(0));
         this.clavier = new Clavier("AZERTYUIOPQSDFGHJKLMWXCVBN-", new ControleurLettres(this.modelePendu, this));
         this.motCrypte = new Text(this.modelePendu.getMotCrypte());
+        this.chrono = new Chronometre();
         // A terminer d'implementer
     }
 
@@ -126,6 +129,7 @@ public class Pendu extends Application {
         boutonMaison = new Button();
         boutonMaison.setOnAction(new ControleurBoutonHome(this.modelePendu, this));
         boutonParametres = new Button();
+        boutonParametres.setOnAction(new ControleurParametre(this.modelePendu, this));
         boutonInfo = new Button();
         boutonInfo.setOnAction(new ControleurInfos(this));
         ImageView maison = new ImageView(new Image(new File("./img/home.png").toURI().toString()));
@@ -152,8 +156,7 @@ public class Pendu extends Application {
      * @return le panel du chronomètre
      */
     private TitledPane leChrono(){
-        Label l = new Label("0s");
-        TitledPane res = new TitledPane("Chronomètre", l);
+        TitledPane res = new TitledPane("Chronomètre", this.chrono);
         return res;
     }
 
@@ -170,15 +173,18 @@ public class Pendu extends Application {
         droite.setPadding(new Insets(20, 20, 20, 20));//top, right, bottom, left
         droite.setAlignment(Pos.TOP_CENTER);
         Button nvMot = new Button("Nouveau mot");
+        nvMot.setOnAction(new ControleurLancerPartie(this.modelePendu, this));
+        int numDifficulté = this.modelePendu.getNiveau();
+        String nomDiff = this.modelePendu.intToString(numDifficulté);
+        this.leNiveau = new Text("Niveau " + nomDiff);
         droite.getChildren().addAll(this.leNiveau, this.leChrono(), nvMot);
         borderPane.setRight(droite);
 
         VBox centre = new VBox();
         this.motCrypte = new Text(this.modelePendu.getMotCrypte());
-        int numDifficulté = this.modelePendu.getNiveau();
-        String nomDiff = this.modelePendu.intToString(numDifficulté);
+        
 
-        this.leNiveau = new Text("Niveau " + nomDiff);
+
         this.motCrypte.setStyle("-fx-font-size: 30;");
         this.leNiveau.setStyle("-fx-font-size: 20;");
         centre.getChildren().addAll(this.motCrypte, this.dessin, this.pg, this.clavier);
@@ -210,6 +216,8 @@ public class Pendu extends Application {
         rb4.setOnAction(new ControleurNiveau(this.modelePendu));
         tg.getToggles().addAll(rb1, rb2, rb3, rb4);
         rb1.setSelected(true);
+        this.leNiveau.setText("Niveau Facile");
+        this.modelePendu.setNiveau(MotMystere.FACILE);
         radiosButton.getChildren().addAll(rb1, rb2, rb3, rb4);
         radiosButton.setSpacing(5);
         radiosButton.setPadding(new Insets(10, 10, 10, 10));
@@ -238,6 +246,8 @@ public class Pendu extends Application {
     }
     
     public void modeJeu(){
+        this.chrono.resetTime();
+        this.chrono.start();
         this.panelCentral.setCenter(this.fenetreJeu());
         boutonMaison.setDisable(false);
         boutonParametres.setDisable(true);
@@ -249,7 +259,9 @@ public class Pendu extends Application {
 
     /** lance une partie */
     public void lancePartie(){
-        // A implementer
+        this.modelePendu.setMotATrouver();
+        this.modeJeu();
+        this.majAffichage();
     }
 
     /**
@@ -259,7 +271,7 @@ public class Pendu extends Application {
         this.motCrypte.setText(this.modelePendu.getMotCrypte());
         this.clavier.desactiveTouches(this.modelePendu.getLettresEssayees());
         this.dessin.setImage(this.lesImages.get(this.modelePendu.getNbErreursMax()-this.modelePendu.getNbErreursRestants()));
-        this.pg.setProgress((double)this.modelePendu.getNbErreursMax()/this.modelePendu.getNbErreursRestants());
+        this.pg.setProgress(1- (double)this.modelePendu.getNbErreursRestants()/this.modelePendu.getNbErreursMax());
     }
 
     /**
@@ -274,6 +286,23 @@ public class Pendu extends Application {
     public Alert popUpPartieEnCours(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"La partie est en cours!\n Etes-vous sûr de l'interrompre ?", ButtonType.YES, ButtonType.NO);
         alert.setTitle("Attention");
+        return alert;
+    }
+
+    public Alert popUpChangementDeCouleur(){
+        // Créer le sélecteur de couleur
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setValue(Color.WHITE); // Couleur par défaut
+    
+        // Créer l'alerte
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Changement de couleur");
+        alert.setHeaderText("Voulez-vous changer la couleur du fond ?");
+        alert.getDialogPane().setContent(colorPicker); // Ajouter le sélecteur de couleur à l'alerte
+    
+        // Ajouter les boutons Oui et Non
+        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+    
         return alert;
     }
         
@@ -297,14 +326,18 @@ public class Pendu extends Application {
     }
     
     public Alert popUpMessageGagne(){
-        // A implementer
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Bravo");
+        alert.setHeaderText("Vous avez gagné!");
+        alert.setContentText("Vous avez trouvé le mot en " + this.chrono.getTime() + " secondes.");
         return alert;
     }
     
     public Alert popUpMessagePerdu(){
-        // A implementer    
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Dommage");
+        alert.setHeaderText("Vous avez perdu!");
+        alert.setContentText("Le mot à trouver était : " + this.modelePendu.getMotATrouve());
         return alert;
     }
 

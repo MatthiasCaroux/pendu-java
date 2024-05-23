@@ -38,17 +38,17 @@ public class ControleurLancerPartie implements EventHandler<ActionEvent> {
                 System.out.println("Lancer une partie");
                 this.vuePendu.modeJeu();
             }
-        }
-        else{
-            Optional<ButtonType> reponse = this.vuePendu.popUpPartieEnCours().showAndWait(); // on lance la fenêtre popup et on attends la réponse
+            else if (btn.getText().equals("Nouveau mot")) {
+                Optional<ButtonType> reponse = this.vuePendu.popUpPartieEnCours().showAndWait(); // on lance la fenêtre popup et on attends la réponse
             
-            if (reponse.isPresent() && reponse.get().equals(ButtonType.YES)){
-                System.out.println("Ok !");
+                if (reponse.isPresent() && reponse.get().equals(ButtonType.YES)){
+                    System.out.println("Ok !");
+                    this.vuePendu.lancePartie();
+                }
+                else{
+                    System.out.println("D'ac !");
+                }
             }
-            else{
-                System.out.println("D'ac !");
-            }
-        }
-        
+        }        
     }
 }
