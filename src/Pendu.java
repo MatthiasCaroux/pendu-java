@@ -10,13 +10,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.control.ButtonBar.ButtonData ;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.paint.Color;
 
 import java.util.List; 
-import java.util.Arrays;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -84,12 +79,16 @@ public class Pendu extends Application {
      */ 
     private Button bJouer;
 
+    private Color couleur = Color.WHITE;
+
+    private BorderPane fenetre;
+
     /**
      * initialise les attributs (créer le modèle, charge les images, crée le chrono ...)
      */
     @Override
     public void init() {
-        this.modelePendu = new MotMystere("/usr/share/dict/french", 3, 10, MotMystere.FACILE, 10);
+        this.modelePendu = new MotMystere("./ressources/french", 3, 10, MotMystere.FACILE, 10);
         this.lesImages = new ArrayList<Image>();
         this.chargerImages("./img");
         
@@ -103,14 +102,13 @@ public class Pendu extends Application {
         this.clavier = new Clavier("AZERTYUIOPQSDFGHJKLMWXCVBN-", new ControleurLettres(this.modelePendu, this));
         this.motCrypte = new Text(this.modelePendu.getMotCrypte());
         this.chrono = new Chronometre();
-        // A terminer d'implementer
     }
 
     /**
      * @return  le graphe de scène de la vue à partir de methodes précédantes
      */
     private Scene laScene(){
-        BorderPane fenetre = new BorderPane();
+        this.fenetre = new BorderPane();
         fenetre.setTop(this.titre());
         fenetre.setCenter(this.panelCentral);
         return new Scene(fenetre, 800, 1000);
@@ -252,10 +250,7 @@ public class Pendu extends Application {
         boutonMaison.setDisable(false);
         boutonParametres.setDisable(true);
     }
-    
-    public void modeParametres(){
-        // A implémenter
-    }
+
 
     /** lance une partie */
     public void lancePartie(){
@@ -279,8 +274,7 @@ public class Pendu extends Application {
      * @return le chronomètre du jeu
      */
     public Chronometre getChrono(){
-        // A implémenter
-        return null; // A enlever
+        return this.chrono;
     }
 
     public Alert popUpPartieEnCours(){
@@ -299,15 +293,15 @@ public class Pendu extends Application {
         alert.setTitle("Changement de couleur");
         alert.setHeaderText("Voulez-vous changer la couleur du fond ?");
         alert.getDialogPane().setContent(colorPicker); // Ajouter le sélecteur de couleur à l'alerte
-    
-        // Ajouter les boutons Oui et Non
+        this.couleur = colorPicker.getValue();
+           
+        
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
     
         return alert;
     }
         
     public Alert popUpReglesDuJeu(){
-        // A implementer
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Règles du jeu");
         alert.setHeaderText("Le jeu du pendu");
@@ -339,6 +333,21 @@ public class Pendu extends Application {
         alert.setHeaderText("Vous avez perdu!");
         alert.setContentText("Le mot à trouver était : " + this.modelePendu.getMotATrouve());
         return alert;
+    }
+
+    public void changerCouleur(){
+        if (this.fenetre.getTop() != null) {
+            String couleurCSS = String.format( "#%02X%02X%02X",
+                (int)( this.couleur.getRed() * 255 ),
+                (int)( this.couleur.getGreen() * 255 ),
+                (int)( this.couleur.getBlue() * 255 ) );
+            this.fenetre.getTop().setStyle("-fx-background-color: " + couleurCSS + ";");
+        }
+    }
+
+
+    public void setCouleur(Color couleur) {
+        this.couleur = couleur;
     }
 
     /**

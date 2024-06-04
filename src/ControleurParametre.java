@@ -2,7 +2,9 @@ import java.util.Optional;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ColorPicker;
 
 /**
  * Contrôleur à activer lorsque l'on clique sur le bouton engrenage
@@ -32,6 +34,12 @@ public class ControleurParametre implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent actionEvent) {
-        Optional<ButtonType> reponse = this.vuePendu.popUpChangementDeCouleur().showAndWait(); // on lance la fenêtre popup et on attends la réponse
+        Alert alert = this.vuePendu.popUpChangementDeCouleur();
+        Optional<ButtonType> reponse = alert.showAndWait();
+        if (reponse.isPresent() && reponse.get() == ButtonType.YES) { // si la réponse est OK
+            ColorPicker colorPicker = (ColorPicker) alert.getDialogPane().getContent();
+            this.vuePendu.setCouleur(colorPicker.getValue());
+            this.vuePendu.changerCouleur();
+        }
     }
 }
