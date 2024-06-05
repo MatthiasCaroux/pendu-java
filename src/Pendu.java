@@ -243,6 +243,9 @@ public class Pendu extends Application {
         boutonParametres.setDisable(false);
     }
     
+    /**
+     * change le panel central pour afficher le jeu
+     */
     public void modeJeu(){
         this.chrono.resetTime();
         this.chrono.start();
@@ -277,12 +280,20 @@ public class Pendu extends Application {
         return this.chrono;
     }
 
+    /**
+     * accesseur du modèle (pour les controleur du jeu)
+     * @return le modèle du jeu
+     */
     public Alert popUpPartieEnCours(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"La partie est en cours!\n Etes-vous sûr de l'interrompre ?", ButtonType.YES, ButtonType.NO);
         alert.setTitle("Attention");
         return alert;
     }
 
+    /**
+     * accesseur du modèle (pour les controleur du jeu)
+     * @return le modèle du jeu
+     */
     public Alert popUpChangementDeCouleur(){
         // Créer le sélecteur de couleur
         ColorPicker colorPicker = new ColorPicker();
@@ -301,6 +312,10 @@ public class Pendu extends Application {
         return alert;
     }
         
+    /**
+     * accesseur du modèle (pour les controleur du jeu)
+     * @return le modèle du jeu
+     */
     public Alert popUpReglesDuJeu(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Règles du jeu");
@@ -319,6 +334,10 @@ public class Pendu extends Application {
         return alert;
     }
     
+    /**
+     * accesseur du modèle (pour les controleur du jeu)
+     * @return le modèle du jeu
+     */
     public Alert popUpMessageGagne(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Bravo");
@@ -335,6 +354,10 @@ public class Pendu extends Application {
         return alert;
     }
 
+    /**
+     * accesseur du modèle (pour les controleur du jeu)
+     * @return le modèle du jeu
+     */
     public void changerCouleur(){
         if (this.fenetre.getTop() != null) {
             String couleurCSS = String.format( "#%02X%02X%02X",
@@ -345,7 +368,10 @@ public class Pendu extends Application {
         }
     }
 
-
+    /**
+     * accesseur du modèle (pour les controleur du jeu)
+     * @return le modèle du jeu
+     */
     public void setCouleur(Color couleur) {
         this.couleur = couleur;
     }
